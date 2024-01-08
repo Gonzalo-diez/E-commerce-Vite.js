@@ -7,23 +7,20 @@ function Footer() {
     <footer className="footer-container">
       <Container>
         <Row>
-          <Col md={6} lg={4}>
-            <p>Proyecto e-commerce</p>
-          </Col>
-          <Col md={6} lg={8}>
-            <ul className="footer-links">
-              <li>
-                <a href="https://github.com/tuusuario" target="_blank">
+          <Col md={6} lg={8} className="d-flex justify-content-center">
+            <ul className="footer-links">  
+              <li className="mx-4">
+                <a href="https://github.com/tuusuario" target="_blank" rel="noopener noreferrer">
                   GitHub
                 </a>
               </li>
-              <li>
-                <a href="https://linkedin.com/in/tuusuario" target="_blank">
+              <li className="mx-4">
+                <a href="https://linkedin.com/in/tuusuario" target="_blank" rel="noopener noreferrer">
                   LinkedIn
                 </a>
               </li>
-              <li>
-                <a href="https://tuportfolio.com" target="_blank">
+              <li className="mx-4">
+                <a href="https://tuportfolio.com" target="_blank" rel="noopener noreferrer">
                   Portfolio
                 </a>
               </li>

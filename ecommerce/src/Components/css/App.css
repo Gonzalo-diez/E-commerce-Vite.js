@@ -7,8 +7,13 @@
     margin-top: 20px;
 }
 
+.logos-container {
+    display: flex;
+}
+
 .logos {
     width: 6%;
+    margin-right: 40px;
 }
 
 /* === Footer ===*/

@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
-import ViteLogo from "../../../public/vite.svg";
-import ReactLogo from "../../assets/react.svg";
-import BootstrapLogo from "../../assets/bootstrap.svg";
-import MongoDBLogo from "../../assets/mongo.svg";
+import ViteLogo from "../logos/vite.svg";
+import ReactLogo from "../logos/react.svg";
+import BootstrapLogo from "../logos/bootstrap.svg";
+import MongoDBLogo from "../logos/mongo.svg";
 import "../css/App.css";
 
 function Home() {
@@ -16,12 +16,12 @@ function Home() {
             <section>
               <h2>Bienvenido a este proyecto E-commerce</h2>
               <p>Las tecnologías usadas en este proyecto son:</p>
-              <ul>
+              <div className="logos-container">
                 <img src={ViteLogo} className="logos" />
                 <img src={ReactLogo} className="logos" />
                 <img src={BootstrapLogo} className="logos" />
                 <img src={MongoDBLogo} className="logos" />
-              </ul>
+              </div>
             </section>
           </Col>
         </Row>
