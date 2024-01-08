@@ -1,0 +1,37 @@
+/* === Home ===*/
+.home-container {
+    padding: 40px 0;
+}
+
+.cta-buttons {
+    margin-top: 20px;
+}
+
+.logos {
+    width: 6%;
+}
+
+/* === Footer ===*/
+.footer-container {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: #333;
+}
+
+.footer-links a:hover {
+    color: #007bff;
+}
