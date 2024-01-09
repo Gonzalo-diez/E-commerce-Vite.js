@@ -1,3 +1,4 @@
+import { Route, Routes } from 'react-router-dom';
 import './css/App.css'
 import Layout from './Footer/Layout';
 import Home from './Home/Home';
@@ -10,7 +11,9 @@ function App() {
     <>
       <Menu />
       <Layout>
-        <Home />
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
       </Layout>
     </>
   )
