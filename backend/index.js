@@ -7,7 +7,6 @@ import { Strategy as LocalStrategy } from "passport-local";
 
 const app = express();
 
-
 // Conexión a la base de datos MongoDB
 mongoose.connect("mongodb://localhost:27017/tienda", {
     useNewUrlParser: true,

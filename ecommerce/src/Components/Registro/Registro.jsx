@@ -1,37 +1,54 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
-import { Form, Button, Toast } from 'react-bootstrap';
+import { useNavigate, Link } from "react-router-dom";
+import { Form, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const Login = ({ setIsAuthenticated, setUsuario }) => {
+const Registro = ({ setIsAuthenticated }) => {
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
   const [correoElectronico, setCorreoElectronico] = useState("");
   const [contrasena, setContrasena] = useState("");
-  const [showErrorToast, setShowErrorToast] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleRegistro = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:8800/login", {
+      const res = await axios.post("http://localhost:8800/registro", {
+        nombre: nombre,
+        apellido: apellido,
         correo_electronico: correoElectronico,
         contrasena: contrasena,
       });
       if (res.status === 200) {
-        setUsuario(res.data.usuario);
         setIsAuthenticated(true);
         navigate("/");
       }
     } catch (err) {
       console.log(err);
-      setShowErrorToast(true);
     }
   };
 
   return (
     <div className="form-container">
-      <h2>Iniciar sesión</h2>
-      <Form onSubmit={handleLogin}>
+      <h2>Registro de usuario</h2>
+      <Form onSubmit={handleRegistro}>
+        <Form.Group controlId="nombre">
+          <Form.Label>Nombre:</Form.Label>
+          <Form.Control
+            type="text"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+          />
+        </Form.Group>
+        <Form.Group controlId="apellido">
+          <Form.Label>Apellido:</Form.Label>
+          <Form.Control
+            type="text"
+            value={apellido}
+            onChange={(e) => setApellido(e.target.value)}
+          />
+        </Form.Group>
         <Form.Group controlId="correoElectronico">
           <Form.Label>Correo Electrónico:</Form.Label>
           <Form.Control
@@ -50,26 +67,13 @@ const Login = ({ setIsAuthenticated, setUsuario }) => {
         </Form.Group>
         <div className="button-link-container">
           <Button variant="primary" type="submit">
-            Iniciar sesión
+            Registro
           </Button>
-          <Link to="/registro">Registro</Link>
+          <Link to="/login">Login</Link>
         </div>
       </Form>
-      <Toast
-        show={showErrorToast}
-        onClose={() => setShowErrorToast(false)}
-        delay={3000}
-        autohide
-        bg="danger"
-        text="white"
-      >
-        <Toast.Header>
-          <strong className="mr-auto">Email o contraseña incorrectos</strong>
-        </Toast.Header>
-        <Toast.Body>Si usted no tiene cuenta registrese.</Toast.Body>
-      </Toast>
     </div>
   );
 };
 
-export default Login;
+export default Registro;
