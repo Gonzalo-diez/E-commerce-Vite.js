@@ -47,7 +47,7 @@ const productoSchema = new mongoose.Schema({
     descripcion: String,
     precio: Number,
     stock: Number,
-    tipo: String,
+    categoria: String,
     imagen_url: String,
     usuario: {
         type: mongoose.Schema.Types.ObjectId,
@@ -173,13 +173,13 @@ app.get("/", async (req, res) => {
     }
 });
 
-// Método sección busqueda de productos según el tipo
-app.get("/productos/:tipo", async (req, res) => {
-    const tipo = req.params.tipo;
+// Método sección busqueda de productos según el categoria
+app.get("/productos/:categoria", async (req, res) => {
+    const categoria = req.params.categoria;
 
     try {
-        // Utiliza el método find de Mongoose para buscar productos por tipo
-        const productos = await Producto.find({ tipo }).exec();
+        // Utiliza el método find de Mongoose para buscar productos por categoria
+        const productos = await Producto.find({ categoria }).exec();
         return res.json(productos);
     } catch (err) {
         return res.status(500).json({ error: "Error en la base de datos", details: err.message });
@@ -230,7 +230,7 @@ app.post("/agregarProductos", async (req, res) => {
         descripcion,
         precio,
         stock,
-        tipo,
+        categoria,
         imagen_url,
     } = req.body;
 
@@ -241,7 +241,7 @@ app.post("/agregarProductos", async (req, res) => {
             descripcion,
             precio,
             stock,
-            tipo,
+            categoria,
             imagen_url,
         });
 
@@ -325,10 +325,10 @@ app.post('/productos/comentarios/agregar', async (req, res) => {
 });
 
 
-// Método para actualizar el producto
-app.put("/productos/actualizarProducto/:id", async (req, res) => {
+// Método para editar el producto
+app.put("/productos/editarProducto/:id", async (req, res) => {
     const productId = req.params.id;
-    const { nombre, marca, descripcion, precio, stock, tipo, imagen_url } = req.body;
+    const { nombre, marca, descripcion, precio, stock, categoria, imagen_url } = req.body;
 
     try {
         const updatedProduct = await Producto.findByIdAndUpdate(
@@ -339,7 +339,7 @@ app.put("/productos/actualizarProducto/:id", async (req, res) => {
                 descripcion,
                 precio,
                 stock,
-                tipo,
+                categoria,
                 imagen_url,
             },
             { new: true }

@@ -76,7 +76,7 @@ function Home({ isAuthenticated }) {
                     <Button variant="primary" onClick={() => navigate(`/productos/detalle/${producto._id}`)}>Ver más</Button>
                     {isAuthenticated && (
                       <div className="inicio-link-container">
-                        <Button variant="warning" onClick={() => navigate(`/productos/actualizarProducto/${producto._id}`)}><IoPencil /></Button>
+                        <Button variant="warning" onClick={() => navigate(`/productos/editarProducto/${producto._id}`)}><IoPencil /></Button>
                         <Button variant="danger" onClick={() => handleEliminarProducto(producto._id)}><IoTrash /></Button>
                       </div>
                     )}
