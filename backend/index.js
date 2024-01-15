@@ -232,10 +232,14 @@ app.post("/agregarProductos", async (req, res) => {
         stock,
         categoria,
         imagen_url,
+        user,
     } = req.body;
+
+    const userId = user._id
 
     try {
         const nuevoProducto = new Producto({
+            usuario: userId,
             nombre,
             marca,
             descripcion,
@@ -271,7 +275,9 @@ app.post("/registro", async (req, res, next) => {
         await newUser.save();
 
         passport.authenticate("local")(req, res, () => {
-            return res.json({ message: "Usuario registrado!" });
+            const userId = newUser._id;
+            return res.json({ message: "Usuario registrado!",
+            usuario: { _id: userId, nombre: newUser.nombre, apellido: newUser.apellido, correo_electronico: newUser.correo_electronico }, });
         });
     } catch (err) {
         return next(err);
@@ -298,7 +304,9 @@ app.post("/login", (req, res, next) => {
             if (loginErr) {
                 return next(loginErr);
             }
-            return res.json({ message: "Inicio de sesión exitoso", usuario: user });
+            const userId = user._id;
+            return res.json({ message: "Inicio de sesión exitoso",
+            usuario: { _id: userId, nombre: user.nombre, apellido: user.apellido, correo_electronico: user.correo_electronico },});
         });
     })(req, res, next);
 });
@@ -412,6 +420,75 @@ app.post("/comprar", async (req, res) => {
         return res.status(500).json({ error: "Error en la base de datos", details: err.message });
     }
 });
+
+// Método para obtener los productos creados por un usuario
+app.get("/usuario/productos-creados/:usuarioId", async (req, res) => {
+    const usuarioId = req.params.usuarioId;
+
+    try {
+        const productosCreados = await Producto.find({ usuario: usuarioId }).exec();
+        return res.json(productosCreados);
+    } catch (err) {
+        return res.status(500).json({ error: "Error en la base de datos", details: err.message });
+    }
+});
+
+// Método para obtener los productos comprados por un usuario
+app.get("/usuario/productos-comprados/:usuarioId", async (req, res) => {
+    const usuarioId = req.params.usuarioId;
+
+    try {
+        const compras = await Compra.find({ usuario: usuarioId }).populate('productos.producto').exec();
+        const productosComprados = compras.flatMap(compra => compra.productos.map(item => item.producto));
+
+        return res.json(productosComprados);
+    } catch (err) {
+        return res.status(500).json({ error: "Error en la base de datos", details: err.message });
+    }
+});
+
+
+// Método para obtener los productos vendidos por un usuario
+app.get("/usuario/productos-vendidos/:usuarioId", async (req, res) => {
+    const usuarioId = req.params.usuarioId;
+
+    try {
+        const productosVendidos = await Producto.find({ usuario: usuarioId }).exec();
+        return res.json(productosVendidos);
+    } catch (err) {
+        return res.status(500).json({ error: "Error en la base de datos", details: err.message });
+    }
+});
+
+
+// Método para obtener información del usuario (productos creados, comprados, vendidos)
+app.get("/user/:userId", async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const productosCreados = await Producto.find({ usuario: userId }).exec();
+
+        const compras = await Compra.find({ usuario: userId }).populate('productos.producto').exec();
+        const productosComprados = [];
+
+        compras.forEach(compra => {
+            compra.productos.forEach(producto => {
+                productosComprados.push(producto.producto);
+            });
+        });
+
+        const productosVendidos = await Producto.find({ 'compras.usuario': userId }).exec();
+
+        return res.json({
+            productosCreados,
+            productosComprados,
+            productosVendidos
+        });
+    } catch (err) {
+        return res.status(500).json({ error: "Error en la base de datos", details: err.message });
+    }
+});
+
 
 app.listen(8800, () => {
     console.log("Backend conectado");

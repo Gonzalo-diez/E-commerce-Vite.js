@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import './css/App.css'
 import Layout from './Footer/Layout';
 import Home from './Home/Home';
 import Menu from './Menu/Menu';
 import Login from './Login/Login';
 import Registro from './Registro/Registro';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import AgregarProductos from './Agregar/AgregarProducto';
 import BorrarProducto from './Borrar/BorrarProducto';
 import EditarProducto from './Editar/EditarProducto';
 import Carrito from './Carrito/Carrito';
 import ProductoCategoria from './Productos/Categoria/ProductoCategoria';
 import Producto from './Productos/Producto';
+import User from './User/User';
+import './css/App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -35,12 +36,13 @@ function App() {
 
   return (
     <>
-      <Menu />
+      <Menu isAuthenticated={isAuthenticated} />
       <Layout>
         <Routes>
           <Route path="/" element={<Home isAuthenticated={isAuthenticated} />} />
           <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} setUsuario={setUsuario} />} />
-          <Route path="/registro" element={<Registro setIsAuthenticated={setIsAuthenticated} />} />
+          <Route path="/registro" element={<Registro setIsAuthenticated={setIsAuthenticated} setUsuario={setUsuario} />} />
+          <Route path="/user/:userId" element={<User isAuthenticated={isAuthenticated} usuario={usuario} setUsuario={setUsuario} />} />
           <Route path="/productos/detalle/:id" element={<Producto isAuthenticated={isAuthenticated} addToCart={addToCart} usuario={usuario} />} />
           <Route path="/productos/:categoria" element={<ProductoCategoria />} />
           <Route path="/agregarProductos" element={<AgregarProductos isAuthenticated={isAuthenticated} />} />
@@ -53,4 +55,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

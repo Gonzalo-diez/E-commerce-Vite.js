@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Button, Toast } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { useAuth } from "../context/AuthContext";
 
 const Login = ({ setIsAuthenticated, setUsuario }) => {
+  const { setAuthenticatedUserId } = useAuth();
   const [correoElectronico, setCorreoElectronico] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -20,7 +21,9 @@ const Login = ({ setIsAuthenticated, setUsuario }) => {
       if (res.status === 200) {
         setUsuario(res.data.usuario);
         setIsAuthenticated(true);
-        navigate("/");
+        const userId = res.data.usuario._id;
+        setAuthenticatedUserId(userId);
+        navigate(`/user/${userId}`);
       }
     } catch (err) {
       console.log(err);

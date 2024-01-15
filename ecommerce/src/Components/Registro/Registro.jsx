@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { Form, Button } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { useAuth } from "../context/AuthContext";
 
-const Registro = ({ setIsAuthenticated }) => {
+const Registro = ({ setIsAuthenticated, setUsuario }) => {
+  const { setAuthenticatedUserId } = useAuth();
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [correoElectronico, setCorreoElectronico] = useState("");
@@ -22,7 +23,11 @@ const Registro = ({ setIsAuthenticated }) => {
       });
       if (res.status === 200) {
         setIsAuthenticated(true);
-        navigate("/");
+        const userData = res.data.usuario;
+        setUsuario(userData);
+        const userId = userData._id;
+        setAuthenticatedUserId(userId);
+        navigate(`/user/${userId}`);
       }
     } catch (err) {
       console.log(err);

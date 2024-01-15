@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
+import { useAuth } from "../context/AuthContext";
 import "../css/App.css";
 
 function AgregarProductos({ isAuthenticated }) {
+  const { userId } = useAuth();
   const navigate = useNavigate();
   const [nombre, setNombre] = useState("");
   const [marca, setMarca] = useState("");
@@ -13,6 +15,22 @@ function AgregarProductos({ isAuthenticated }) {
   const [stock, setStock] = useState("");
   const [url, setUrl] = useState("");
   const [categoria, setCategoria] = useState("");
+  const [usuario, setUsuario] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8800/user/${userId}`);
+        setUsuario(response.data);
+      } catch (error) {
+        console.error("Error al obtener información del usuario:", error);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchUser();
+    }
+  }, [isAuthenticated]);
 
   const handleAgregar = async () => {
     if (!isAuthenticated) {
@@ -20,6 +38,7 @@ function AgregarProductos({ isAuthenticated }) {
       navigate("/login");
       return;
     }
+
     try {
       const response = await axios.post("http://localhost:8800/agregarProductos", {
         nombre,
@@ -28,7 +47,8 @@ function AgregarProductos({ isAuthenticated }) {
         precio,
         stock,
         categoria,
-        imagen_url: url
+        imagen_url: url,
+        user: userId, 
       });
 
       console.log(response.data.message);
@@ -37,6 +57,7 @@ function AgregarProductos({ isAuthenticated }) {
       console.error("Error al agregar producto:", error);
     }
   };
+
 
   return (
     <div className="agregar-container">
