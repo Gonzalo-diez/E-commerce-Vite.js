@@ -12,6 +12,8 @@ import Carrito from './Carrito/Carrito';
 import ProductoCategoria from './Productos/Categoria/ProductoCategoria';
 import Producto from './Productos/Producto';
 import User from './User/User';
+import EditarPassword from './Editar/EditarPassword';
+import EditarPerfil from './Editar/EditarPerfil';
 import './css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -43,6 +45,8 @@ function App() {
           <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} setUsuario={setUsuario} />} />
           <Route path="/registro" element={<Registro setIsAuthenticated={setIsAuthenticated} setUsuario={setUsuario} />} />
           <Route path="/user/:userId" element={<User isAuthenticated={isAuthenticated} usuario={usuario} setUsuario={setUsuario} />} />
+          <Route path="/user/editarPerfil/:id" element={<EditarPerfil />} />
+          <Route path="/user/cambiarContrasena/:id" element={<EditarPassword />} />
           <Route path="/productos/detalle/:id" element={<Producto isAuthenticated={isAuthenticated} addToCart={addToCart} usuario={usuario} />} />
           <Route path="/productos/:categoria" element={<ProductoCategoria />} />
           <Route path="/agregarProductos" element={<AgregarProductos isAuthenticated={isAuthenticated} />} />

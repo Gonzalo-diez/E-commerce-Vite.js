@@ -252,13 +252,17 @@ app.post("/agregarProductos", async (req, res) => {
         await nuevoProducto.save();
 
         // Agrega el nuevo producto al array productosCreados del usuario
-        const user = await User.findByIdAndUpdate(userId, { $push: { productosCreados: nuevoProducto._id } }, { new: true });
+        const updatedUser = await User.findOneAndUpdate(
+            { _id: userId },
+            { $push: { productosCreados: nuevoProducto._id } },
+            { new: true }
+        ).populate('productosCreados');
 
         // Devuelve un objeto JSON con el mensaje y el producto creado
         return res.json({
             message: "Producto creado!!!",
             producto: nuevoProducto,
-            user: user,
+            user: updatedUser,
         });
 
     } catch (err) {
@@ -284,10 +288,19 @@ app.post("/registro", async (req, res, next) => {
 
         await newUser.save();
 
-        passport.authenticate("local")(req, res, () => {
+        passport.authenticate("local")(req, res, async () => {
             const userId = newUser._id;
-            return res.json({ message: "Usuario registrado!",
-            usuario: { _id: userId, nombre: newUser.nombre, apellido: newUser.apellido, correo_electronico: newUser.correo_electronico }, });
+            const populatedUser = await User.findById(userId).populate('productosCreados');
+            return res.json({
+                message: "Usuario registrado!",
+                usuario: {
+                    _id: userId,
+                    nombre: newUser.nombre,
+                    apellido: newUser.apellido,
+                    correo_electronico: newUser.correo_electronico,
+                    productosCreados: populatedUser.productosCreados, 
+                },
+            });
         });
     } catch (err) {
         return next(err);
@@ -436,7 +449,7 @@ app.get("/usuario/productos-creados/:usuarioId", async (req, res) => {
     const usuarioId = req.params.usuarioId;
 
     try {
-        const productosCreados = await Producto.find({ usuario: usuarioId }).exec();
+        const productosCreados = await Producto.find({ usuario: usuarioId }).populate('usuario').exec();
         return res.json(productosCreados);
     } catch (err) {
         return res.status(500).json({ error: "Error en la base de datos", details: err.message });
@@ -499,6 +512,78 @@ app.get("/user/:userId", async (req, res) => {
     }
 });
 
+// Método de detalle de usuario
+app.get("/user/detalle/:id", async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const userId = new mongoose.Types.ObjectId(id);
+
+        const user = await User.findOne({ _id: userId })
+            .select("nombre apellido correo_electronico")
+            .exec();
+
+        if (!user) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        return res.json(user);
+    } catch (err) {
+        return res.status(500).json({ error: "Error en la base de datos", details: err.message });
+    }
+});
+
+// Método para editar el perfil de un usuario
+app.put("/user/editarPerfil/:userId", async (req, res) => {
+    const userId = req.params.userId;
+    const { nombre, apellido, correo_electronico } = req.body;
+
+    try {
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { nombre, apellido, correo_electronico },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        return res.json("Perfil de usuario actualizado!");
+    } catch (err) {
+        console.error("Error en la actualización del perfil:", err);
+        return res.status(500).json({ error: "Error en la base de datos", details: err.message });
+    }
+});
+
+// Método para cambiar la contraseña de un usuario
+app.put("/user/cambiarContrasena/:userId", async (req, res) => {
+    const userId = req.params.userId;
+    const { contrasena } = req.body;
+
+    try {
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { contrasena },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        return res.json("Contraseña de usuario actualizada!");
+    } catch (err) {
+        console.error("Error en la actualización de la contraseña:", err);
+        return res.status(500).json({ error: "Error en la base de datos", details: err.message });
+    }
+});
+
+// Método para cerrar sesión
+app.get("/logout", (req, res) => {
+    req.logout();
+    res.json({ message: "Sesión cerrada exitosamente" });
+});
 
 app.listen(8800, () => {
     console.log("Backend conectado");
