@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
     apellido: String,
     correo_electronico: String,
     contrasena: String,
-    productos: [
+    productosCreados: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Producto',
@@ -235,7 +235,7 @@ app.post("/agregarProductos", async (req, res) => {
         user,
     } = req.body;
 
-    const userId = user._id
+    const userId = user._id;
 
     try {
         const nuevoProducto = new Producto({
@@ -251,7 +251,16 @@ app.post("/agregarProductos", async (req, res) => {
 
         await nuevoProducto.save();
 
-        return res.json("Producto creado!!!");
+        // Agrega el nuevo producto al array productosCreados del usuario
+        const user = await User.findByIdAndUpdate(userId, { $push: { productosCreados: nuevoProducto._id } }, { new: true });
+
+        // Devuelve un objeto JSON con el mensaje y el producto creado
+        return res.json({
+            message: "Producto creado!!!",
+            producto: nuevoProducto,
+            user: user,
+        });
+
     } catch (err) {
         console.error("Error al guardar el producto:", err);
         return res
@@ -259,6 +268,7 @@ app.post("/agregarProductos", async (req, res) => {
             .json({ error: "Error en la base de datos", details: err.message });
     }
 });
+
 
 // Método de registro
 app.post("/registro", async (req, res, next) => {

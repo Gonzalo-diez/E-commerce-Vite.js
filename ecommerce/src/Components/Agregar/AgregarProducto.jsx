@@ -48,16 +48,21 @@ function AgregarProductos({ isAuthenticated }) {
         stock,
         categoria,
         imagen_url: url,
-        user: userId, 
+        user: userId,
       });
 
       console.log(response.data.message);
+
+      setUsuario(prevUsuario => ({
+        ...prevUsuario,
+        productosCreados: [...prevUsuario.productosCreados, response.data.producto._id],
+      }));
+
       navigate("/");
     } catch (error) {
       console.error("Error al agregar producto:", error);
     }
   };
-
 
   return (
     <div className="agregar-container">

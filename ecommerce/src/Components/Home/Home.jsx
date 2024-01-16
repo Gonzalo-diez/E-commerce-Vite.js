@@ -21,6 +21,14 @@ function Home({ isAuthenticated }) {
     fetchProductos();
   }, []);
 
+  const handleEliminarProducto = async (productId) => {
+    try {
+      navigate(`/productos/borrarProducto/${productId}`);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const handleAgregarProducto = () => {
     navigate('/agregarProductos');
   };
